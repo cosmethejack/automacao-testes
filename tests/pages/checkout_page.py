@@ -24,3 +24,9 @@ class CheckoutPage(BasePage):
 
     def get_success_message(self):
         return self.get_text(*self.SUCCESS_MSG)
+
+    def is_order_completed(self):
+        return (
+            self.get_success_message().upper()
+            == "THANK YOU FOR YOUR ORDER!"
+        )

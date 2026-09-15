@@ -1,6 +1,5 @@
-# tests/screenplay/questions/order_completed.py
-
 from screenpy import Resolvable
+
 from tests.pages.checkout_page import CheckoutPage
 
 

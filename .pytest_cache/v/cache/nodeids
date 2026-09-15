@@ -1,0 +1,11 @@
+[
+  "test_checkout.py::test_compra_produto_com_sucesso",
+  "tests/fixtures/test_foo.py::test_navegacao",
+  "tests/screenplay/tests/test_checkout_screenplay.py::test_checkout_com_sucesso",
+  "tests/screenplay/tests/test_login_screenplay.py::test_login_com_sucesso",
+  "tests/specs/test_checkout.py::test_compra_produto_com_sucesso",
+  "tests/specs/test_login.py::test_login_valido",
+  "tests/specs/test_login_2.py::test_continuar_comprando_apos_adicionar_item",
+  "tests/specs/test_ptp_checkout.py::test_checkout_ptp",
+  "tests/specs/test_ptp_transaction.py::test_checkout_ptp"
+]

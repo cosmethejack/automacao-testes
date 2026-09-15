@@ -13,6 +13,8 @@ class ProceedToCheckout(Performable):
 
     def perform_as(self, actor):
 
+        print("URL ATUAL:", actor.driver.current_url)
+
         cart_page = CartPage(actor.driver)
         checkout_page = CheckoutPage(actor.driver)
 
