@@ -1,6 +1,5 @@
 import time
 from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from tests.fixtures.driver import driver
@@ -23,20 +22,23 @@ def test_compra_produto_com_sucesso(driver):
     driver.find_element(By.CLASS_NAME, "shopping_cart_link").click()
     wait.until(EC.url_contains("cart.html"))
     
-    # [CORREÇÃO AQUI] Clique JS que já havia funcionado antes para sair do carrinho
     botao_checkout = wait.until(EC.presence_of_element_located((By.ID, "checkout")))
     driver.execute_script("arguments[0].click();", botao_checkout)
     
     wait.until(EC.url_contains("checkout-step-one.html"))
 
-    # 4. PREENCHER DADOS E CONTINUAR COM ENTER
+    # 4. PREENCHER DADOS E CONTINUAR
     campo_nome = wait.until(EC.visibility_of_element_located((By.ID, "first-name")))
     campo_nome.send_keys("Damião")
     driver.find_element(By.ID, "last-name").send_keys("Barbosa")
+    driver.find_element(By.ID, "postal-code").send_keys("30642-290")
     
-    campo_cep = driver.find_element(By.ID, "postal-code")
-    campo_cep.send_keys("30642-290")
-    campo_cep.send_keys(Keys.RETURN)
+    # A SOLUÇÃO DEFINITIVA: 1 segundo para o React registrar os textos
+    time.sleep(1)
+    
+    # Clique perfeitamente normal e aguardado
+    botao_continue = wait.until(EC.element_to_be_clickable((By.ID, "continue")))
+    botao_continue.click()
     
     wait.until(EC.url_contains("checkout-step-two.html"))
     
