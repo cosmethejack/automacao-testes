@@ -45,7 +45,7 @@ jobs:
 
       - name: Run Behave tests
         run: |
-          behave
+          behave tests/features
 
       - name: Upload reports
         uses: actions/upload-artifact@v4
