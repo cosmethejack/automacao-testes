@@ -8,8 +8,10 @@ from selenium.webdriver.support import expected_conditions as EC
 class CheckoutTransaction(AbstractTransaction):
     
     def do(self, **kwargs):
-        driver = self.driver 
+        driver = self.app.driver
         wait = WebDriverWait(driver, 10)
+        
+        driver.find_element(By.ID, "checkout").click()
         
         # Clicar no botão de Checkout
         driver.find_element(By.ID, "checkout").click()
