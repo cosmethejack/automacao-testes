@@ -21,10 +21,9 @@ class CheckoutTransaction(AbstractTransaction):
         first_name_field.send_keys(kwargs.get("name"))
         driver.find_element(By.ID, "last-name").send_keys(kwargs.get("last"))
         
-        # O PULO DO GATO: Simular a tecla ENTER no último campo
         postal_code_field = driver.find_element(By.ID, "postal-code")
         postal_code_field.send_keys(kwargs.get("zip_code"))
-        postal_code_field.send_keys(Keys.RETURN)
+        postal_code_field.send_keys(Keys.RETURN) # O pulo do gato!
         
         wait.until(EC.url_contains("checkout-step-two.html"))
         
