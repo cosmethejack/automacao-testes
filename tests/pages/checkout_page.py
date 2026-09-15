@@ -1,3 +1,5 @@
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from .base_page import BasePage
 
@@ -21,7 +23,11 @@ class CheckoutPage(BasePage):
 
     def finish(self):
         self.click(*self.FINISH)
-
+        
+        WebDriverWait(self.driver, 10).until(
+            EC.visibility_of_element_located(self.SUCCESS_MSG)
+        )
+        
     def get_success_message(self):
         return self.get_text(*self.SUCCESS_MSG)
 
