@@ -1,9 +1,13 @@
-from guara.transaction import AbstractTransaction
-from tests.pages.inventory_page import InventoryPage
+# Certifique-se de ter os imports:
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
 
-class AddToCartTransaction(AbstractTransaction):
-    def do(self):
-        page = InventoryPage(self._driver)
-        page.add_product()
-        page.go_to_cart()
-        return self._driver.current_url
+# Dentro do método que clica na mochila:
+wait = WebDriverWait(self.driver, 10)
+botao_mochila = wait.until(EC.element_to_be_clickable((By.ID, "add-to-cart-sauce-labs-backpack")))
+botao_mochila.click()
+
+# Se você clica no carrinho na mesma transação, espere ele ficar clicável também:
+carrinho = wait.until(EC.element_to_be_clickable((By.CLASS_NAME, "shopping_cart_link")))
+carrinho.click()
