@@ -2,9 +2,9 @@ name: Test Automation
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
   test:
@@ -20,12 +20,14 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.11'
+          python-version: "3.11"
 
-      - name: Install Chrome
+      - name: Setup Chrome
+        uses: browser-actions/setup-chrome@v1
+
+      - name: Chrome Version
         run: |
-          sudo apt-get update
-          sudo apt-get install -y google-chrome-stable
+          google-chrome --version
 
       - name: Install dependencies
         run: |
@@ -39,7 +41,7 @@ jobs:
           python -m pytest tests/specs \
             --html=reports/report.html \
             --junitxml=reports/results.xml \
-            --self-contained-html \
+            --self-contained-html
 
       - name: Run Behave tests
         run: |
