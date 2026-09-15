@@ -1,3 +1,7 @@
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+
 def test_compra_produto_com_sucesso(driver):
     wait = WebDriverWait(driver, 10)
 
