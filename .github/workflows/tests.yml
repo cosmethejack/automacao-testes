@@ -40,7 +40,6 @@ jobs:
             --html=reports/report.html \
             --junitxml=reports/results.xml \
             --self-contained-html \
-            -m smoke
 
       - name: Run Behave tests
         run: |
