@@ -1,6 +1,8 @@
+import pytest
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
+
 
 def driver_func():
     options = webdriver.ChromeOptions()
@@ -16,3 +18,10 @@ def driver_func():
     )
 
     return driver
+
+
+@pytest.fixture
+def driver():
+    browser = driver_func()
+    yield browser
+    browser.quit()

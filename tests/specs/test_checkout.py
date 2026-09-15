@@ -6,7 +6,7 @@ def test_compra_produto_com_sucesso(driver):
     # =========================
     # 1. LOGIN
     # =========================
-    driver.get("https://www.saucedemo.com")
+    driver.get("https://www.saucedemo.com/")
 
     driver.find_element(By.ID, "user-name").send_keys("standard_user")
     driver.find_element(By.ID, "password").send_keys("secret_sauce")
