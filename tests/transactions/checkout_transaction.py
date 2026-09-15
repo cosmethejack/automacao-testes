@@ -10,8 +10,9 @@ class CheckoutTransaction(AbstractTransaction):
         driver = self._driver 
         wait = WebDriverWait(driver, 10)
         
-        botao_checkout = wait.until(EC.element_to_be_clickable((By.ID, "checkout")))
-        botao_checkout.click()
+        # [CORREÇÃO AQUI] Clique JS para sair do carrinho com sucesso
+        botao_checkout = wait.until(EC.presence_of_element_located((By.ID, "checkout")))
+        driver.execute_script("arguments[0].click();", botao_checkout)
         
         wait.until(EC.url_contains("checkout-step-one.html"))
         
@@ -21,9 +22,10 @@ class CheckoutTransaction(AbstractTransaction):
         first_name_field.send_keys(kwargs.get("name"))
         driver.find_element(By.ID, "last-name").send_keys(kwargs.get("last"))
         
+        # ENTER para o formulário
         postal_code_field = driver.find_element(By.ID, "postal-code")
         postal_code_field.send_keys(kwargs.get("zip_code"))
-        postal_code_field.send_keys(Keys.RETURN) # O pulo do gato!
+        postal_code_field.send_keys(Keys.RETURN)
         
         wait.until(EC.url_contains("checkout-step-two.html"))
         
