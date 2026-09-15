@@ -9,42 +9,36 @@ def test_compra_produto_com_sucesso(driver):
 
     # 1. LOGIN
     driver.get("https://www.saucedemo.com/")
-    campo_usuario = wait.until(EC.visibility_of_element_located((By.ID, "user-name")))
-    campo_usuario.send_keys("standard_user")
+    driver.find_element(By.ID, "user-name").send_keys("standard_user")
     driver.find_element(By.ID, "password").send_keys("secret_sauce")
     driver.find_element(By.ID, "login-button").click()
 
     # 2. ADICIONAR PRODUTO
-    botao_mochila = wait.until(EC.presence_of_element_located((By.ID, "add-to-cart-sauce-labs-backpack")))
-    driver.execute_script("arguments[0].click();", botao_mochila)
+    driver.find_element(By.ID, "add-to-cart-sauce-labs-backpack").click()
 
     # 3. IR PARA CARRINHO E CHECKOUT
     driver.find_element(By.CLASS_NAME, "shopping_cart_link").click()
+    
+    # GARANTIA CONTRA O REACT: Espera a rota mudar e "respira" 1 segundo
     wait.until(EC.url_contains("cart.html"))
+    time.sleep(1) 
     
-    botao_checkout = wait.until(EC.presence_of_element_located((By.ID, "checkout")))
-    driver.execute_script("arguments[0].click();", botao_checkout)
-    
-    wait.until(EC.url_contains("checkout-step-one.html"))
+    botao_checkout = wait.until(EC.element_to_be_clickable((By.ID, "checkout")))
+    botao_checkout.click()
 
-    # 4. PREENCHER DADOS E CONTINUAR
+    # 4. PREENCHER DADOS
+    wait.until(EC.url_contains("checkout-step-one.html"))
     campo_nome = wait.until(EC.visibility_of_element_located((By.ID, "first-name")))
     campo_nome.send_keys("Damião")
+    
     driver.find_element(By.ID, "last-name").send_keys("Barbosa")
     driver.find_element(By.ID, "postal-code").send_keys("30642-290")
-    
-    # A SOLUÇÃO DEFINITIVA: 1 segundo para o React registrar os textos
-    time.sleep(1)
-    
-    # Clique perfeitamente normal e aguardado
-    botao_continue = wait.until(EC.element_to_be_clickable((By.ID, "continue")))
-    botao_continue.click()
-    
-    wait.until(EC.url_contains("checkout-step-two.html"))
+    driver.find_element(By.ID, "continue").click()
     
     # 5. FINALIZAR COMPRA
-    botao_finish = wait.until(EC.presence_of_element_located((By.ID, "finish")))
-    driver.execute_script("arguments[0].click();", botao_finish)
+    wait.until(EC.url_contains("checkout-step-two.html"))
+    botao_finish = wait.until(EC.element_to_be_clickable((By.ID, "finish")))
+    botao_finish.click()
 
     # 6. VALIDAÇÃO FINAL
     mensagem = wait.until(EC.visibility_of_element_located((By.CLASS_NAME, "complete-header")))
