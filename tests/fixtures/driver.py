@@ -1,27 +1,3 @@
-import pytest
-from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
-from webdriver_manager.chrome import ChromeDriverManager
+from tests.conftest import driver_func, driver
 
-
-def driver_func():
-    options = webdriver.ChromeOptions()
-
-    options.add_argument("--headless=new")
-    options.add_argument("--no-sandbox")
-    options.add_argument("--disable-dev-shm-usage")
-    options.add_argument("--window-size=1920,1080")
-
-    driver = webdriver.Chrome(
-        service=Service(ChromeDriverManager().install()),
-        options=options
-    )
-
-    return driver
-
-
-@pytest.fixture
-def driver():
-    browser = driver_func()
-    yield browser
-    browser.quit()
+__all__ = ["driver_func", "driver"]

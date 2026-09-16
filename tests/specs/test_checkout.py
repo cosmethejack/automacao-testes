@@ -1,46 +1,36 @@
-import time
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from tests.fixtures.driver import driver
+from tests.pages.login_page import LoginPage
+from tests.pages.inventory_page import InventoryPage
+from tests.pages.cart_page import CartPage
+from tests.pages.checkout_page import CheckoutPage
+
 
 def test_compra_produto_com_sucesso(driver):
-    wait = WebDriverWait(driver, 10)
+    login_page = LoginPage(driver)
+    inventory_page = InventoryPage(driver)
+    cart_page = CartPage(driver)
+    checkout_page = CheckoutPage(driver)
 
     # 1. LOGIN
-    driver.get("https://www.saucedemo.com/")
-    driver.find_element(By.ID, "user-name").send_keys("standard_user")
-    driver.find_element(By.ID, "password").send_keys("secret_sauce")
-    driver.find_element(By.ID, "login-button").click()
+    login_page.open("https://www.saucedemo.com/")
+    login_page.login("standard_user", "secret_sauce")
+    assert inventory_page.is_loaded()
 
-    # 2. ADICIONAR PRODUTO
-    driver.find_element(By.ID, "add-to-cart-sauce-labs-backpack").click()
+    # 2. ADICIONAR PRODUTO E IR AO CARRINHO
+    inventory_page.add_product()
+    inventory_page.go_to_cart()
 
-    # 3. IR PARA CARRINHO E CHECKOUT
-    driver.find_element(By.CLASS_NAME, "shopping_cart_link").click()
-    
-    # GARANTIA CONTRA O REACT: Espera a rota mudar e "respira" 1 segundo
-    wait.until(EC.url_contains("cart.html"))
-    time.sleep(1) 
-    
-    botao_checkout = wait.until(EC.element_to_be_clickable((By.ID, "checkout")))
-    botao_checkout.click()
+    # 3. INICIAR CHECKOUT
+    cart_page.start_checkout()
 
     # 4. PREENCHER DADOS
-    wait.until(EC.url_contains("checkout-step-one.html"))
-    campo_nome = wait.until(EC.visibility_of_element_located((By.ID, "first-name")))
-    campo_nome.send_keys("Damião")
-    
-    driver.find_element(By.ID, "last-name").send_keys("Barbosa")
-    driver.find_element(By.ID, "postal-code").send_keys("30642-290")
-    driver.find_element(By.ID, "continue").click()
-    
-    # 5. FINALIZAR COMPRA
-    wait.until(EC.url_contains("checkout-step-two.html"))
-    botao_finish = wait.until(EC.element_to_be_clickable((By.ID, "finish")))
-    botao_finish.click()
+    checkout_page.fill_form("Damiao", "Barbosa", "30642")
+    checkout_page.continue_checkout()
 
-    # 6. VALIDAÇÃO FINAL
-    mensagem = wait.until(EC.visibility_of_element_located((By.CLASS_NAME, "complete-header")))
-    assert mensagem.is_displayed()
-    assert "Thank you" in mensagem.text
+    # 5. FINALIZAR COMPRA
+    checkout_page.finish()
+
+    # 6. VALIDAR MENSAGEM DE SUCESSO
+    assert checkout_page.is_order_completed()
