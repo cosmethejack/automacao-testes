@@ -1,0 +1,1 @@
+INFO     screenpy:stdout_adapter.py:54 The camera jump-cuts to Usuário!
