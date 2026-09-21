@@ -7,5 +7,6 @@
   "tests/specs/test_login.py::test_login_valido",
   "tests/specs/test_login_2.py::test_continuar_comprando_apos_adicionar_item",
   "tests/specs/test_ptp_checkout.py::test_checkout_ptp",
-  "tests/specs/test_ptp_transaction.py::test_checkout_ptp"
+  "tests/specs/test_ptp_transaction.py::test_checkout_ptp",
+  "tests/specs/test_screenshot_failure_verify.py::test_failure_screenshot_simulation"
 ]

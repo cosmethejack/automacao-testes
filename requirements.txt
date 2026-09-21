@@ -8,3 +8,5 @@ guara
 behave
 screenpy
 screenpy-selenium
+allure-pytest
+allure-behave

@@ -1,4 +1,7 @@
+import os
+from datetime import datetime
 import pytest
+import allure
 from selenium import webdriver
 
 
@@ -22,3 +25,28 @@ def driver():
     browser = driver_func()
     yield browser
     browser.quit()
+
+
+@pytest.hookimpl(tryfirst=True, hookwrapper=True)
+def pytest_runtest_makereport(item, call):
+    outcome = yield
+    rep = outcome.get_result()
+
+    if rep.when == "call" and rep.failed:
+        driver_instance = item.funcargs.get("driver", None)
+        if driver_instance:
+            try:
+                os.makedirs("reports/screenshots", exist_ok=True)
+                screenshot_bytes = driver_instance.get_screenshot_as_png()
+                allure.attach(
+                    screenshot_bytes,
+                    name=f"Evidencia_Falha_Pytest_{item.name}",
+                    attachment_type=allure.attachment_type.PNG
+                )
+                timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+                file_name = f"failed_pytest_{timestamp}_{item.name[:30]}.png"
+                file_path = os.path.join("reports", "screenshots", file_name)
+                with open(file_path, "wb") as f:
+                    f.write(screenshot_bytes)
+            except Exception as e:
+                print(f"Erro ao capturar screenshot no Pytest: {e}")

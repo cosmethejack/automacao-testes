@@ -1,10 +1,14 @@
-name: Test Automation
+name: Test Automation & QAOps Pipeline
 
 on:
   push:
     branches: ["main"]
   pull_request:
     branches: ["main"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   test:
@@ -15,7 +19,7 @@ jobs:
       PYTHONPATH: "."
 
     steps:
-      - name: Checkout
+      - name: Checkout Repository
         uses: actions/checkout@v4
 
       - name: Setup Python
@@ -30,26 +34,74 @@ jobs:
         run: |
           google-chrome --version
 
-      - name: Install dependencies
+      - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Run PyTest tests
+      - name: Prepare Report Directories
         run: |
           mkdir -p reports/screenshots
-          python -m pytest tests/specs \
+          mkdir -p reports/allure-results
+
+      - name: Run PyTest Tests (Specs & Screenplay)
+        id: pytest
+        continue-on-error: true
+        run: |
+          python -m pytest tests/specs tests/screenplay/tests \
             --html=reports/report.html \
             --junitxml=reports/results.xml \
-            --self-contained-html
+            --self-contained-html \
+            --alluredir=reports/allure-results
 
-      - name: Run Behave tests
+      - name: Run Behave BDD Tests
+        id: behave
+        continue-on-error: true
         run: |
-          python -m behave tests/features
+          python -m behave tests/features \
+            -f allure_behave.formatter:AllureFormatter \
+            -o reports/allure-results
 
-      - name: Upload reports
+      - name: Get Allure History
+        uses: actions/checkout@v4
+        if: always()
+        continue-on-error: true
+        with:
+          ref: gh-pages
+          path: gh-pages
+
+      - name: Build Allure Report with History
+        uses: simple-elf/allure-report-action@v1.9
+        if: always()
+        id: allure-report
+        with:
+          allure_results: reports/allure-results
+          gh_pages: gh-pages
+          allure_report: allure-report
+          allure_history: allure-history
+          keep_reports: 20
+
+      - name: Deploy Allure Report to GitHub Pages
+        if: always() && github.ref == 'refs/heads/main'
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: allure-history
+
+      - name: Upload Test Reports & Screenshots
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: automation-reports
-          path: reports/
+          name: automation-reports-and-evidence
+          path: |
+            reports/
+            allure-history/
+
+      - name: Check Overall Test Status
+        if: always()
+        run: |
+          if [ "${{ steps.pytest.outcome }}" != "success" ] || [ "${{ steps.behave.outcome }}" != "success" ]; then
+            echo "❌ Um ou mais testes falharam. Verifique o relatório no Allure e os screenshots de evidência!"
+            exit 1
+          fi

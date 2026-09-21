@@ -5,3 +5,6 @@ __pycache__/
 reports/
 *.log
 .env
+allure-history/
+allure-report/
+gh-pages/
